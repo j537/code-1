@@ -1,0 +1,16 @@
+.dashboard {
+  .advanced-search {
+    margin: 16px 0;
+
+    .date-picker {
+      display: inline-block;
+      margin-right: 16px;
+    }
+  }
+
+  .dataTables_wrapper {
+    .dataTables_filter {
+      display: none;
+    }
+  }
+}

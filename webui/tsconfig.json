@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "jsx": "react",
+    "sourceMap": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
