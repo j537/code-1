@@ -1,24 +1,17 @@
-# README
+# Hivetec Code Exercise
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Requirements
+- Ruby version 2.3 or above
+- bundler
+- PostgresSQL 9.6 or above
 
-Things you may want to cover:
+## Setup
+- `bundle install` install necessary gems
+- Add 'hivetec' role to PostgresSQL server (Check config/database.yml for more details)
+- `rake db:setup` setup database
 
-* Ruby version
+## Start app
+`rails server -p 3000`
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+**NOTE**:
+- WebUI Proxy is configured to work with API server [http://localhost:3000](http://localhost:3000)
