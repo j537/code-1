@@ -13,7 +13,8 @@
     "trailing-comma": false,
     "no-empty": false,
     "object-literal-shorthand": false,
-    "member-ordering": false
+    "member-ordering": false,
+    "array-type": false
   },
   "rulesDirectory": []
 }

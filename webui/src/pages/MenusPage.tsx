@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as $ from 'jquery';
+import * as _ from 'lodash';
 import 'datatables.net';
 import 'datatables.net-dt/css/jquery.dataTables.css';
 import { RefObject } from "react";
@@ -7,16 +8,15 @@ import * as moment from 'moment';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import './Index.scss';
+import './MenusPage.scss';
 
 interface IProps {
 }
 
 interface IState {
-  loading: boolean;
-  menus: IMenu[];
   startDate: moment.Moment;
   endDate: moment.Moment;
+  filters: {};
 }
 
 interface IMenu {
@@ -28,31 +28,21 @@ interface IMenu {
   date: string;
 }
 
-const MenuRow = (menu: IMenu) => (
-  <tr key={menu.id}>
-    <td>{menu.place}</td>
-    <td>{menu.venue}</td>
-    <td>{menu.event}</td>
-    <td>{menu.sponsor}</td>
-    <td>{menu.date}</td>
-    <td><a href="#">View</a></td>
-  </tr>
-);
-
 export default class Index extends React.Component<IProps, IState> {
-  public tableRef: RefObject<HTMLTableElement>;
+  private tableRef: RefObject<HTMLTableElement>;
   private dataTable: DataTables.Api;
+  private exportFormRef: RefObject<HTMLFormElement>;
 
   constructor(props: IProps) {
     super(props);
 
     this.tableRef = React.createRef();
+    this.exportFormRef = React.createRef();
 
     this.state = {
-      menus: [],
-      loading: true,
       startDate: null,
-      endDate: null
+      endDate: null,
+      filters: {},
     };
   }
 
@@ -83,8 +73,8 @@ export default class Index extends React.Component<IProps, IState> {
         { data: null,
           orderable: false,
           searchable: false,
-          render: () => {
-            return '<a href="#">View</a>';
+          render: (data: IMenu) => {
+            return `<a href="#/menus/${data.id}">View</a>`;
           }
         }
       ]
@@ -103,6 +93,12 @@ export default class Index extends React.Component<IProps, IState> {
     const dt = $(this.tableRef.current).DataTable();
     const column = dt.column(colIdx);
     const value = (event.target as HTMLInputElement).value;
+
+    const columnName = this.dataTable.settings().init().columns[colIdx].name;
+    const filters = {...this.state.filters};
+    (filters as any)[columnName] = value;
+
+    this.setState({filters: filters});
     column.search(value).draw();
   }
 
@@ -116,21 +112,54 @@ export default class Index extends React.Component<IProps, IState> {
 
   private searchHandle() {
     let url = 'api/menus';
-    if (this.state.startDate != null && this.state.endDate != null) {
-      const startDate = this.state.startDate.format('YYYY-MM-DD');
-      const endDate = this.state.endDate.format('YYYY-MM-DD');
-      url = `api/menus?start_date=${startDate}&end_date=${endDate}`;
+    const dateRangeParams = this.getDateRangeParams();
+    if (dateRangeParams) {
+      url += `?${dateRangeParams}`;
     }
 
     this.dataTable.ajax.url(url).load();
   }
 
+  private getDateRangeParams() {
+    if (this.state.startDate == null || this.state.endDate == null) {
+      return null;
+    }
+
+    const startDate = this.state.startDate.format('YYYY-MM-DD');
+    const endDate = this.state.endDate.format('YYYY-MM-DD');
+    return `start_date=${startDate}&end_date=${endDate}`;
+  }
+
+  // TODO better file download support
   private exportHandle() {
+    const form = this.exportFormRef.current;
+    let actionUrl = '/api/export/menus';
+
+    const filterParams: string[] = [];
+    _.forOwn(this.state.filters, (value, key) => {
+      filterParams.push(`${key}=${value}`);
+    });
+
+    if (filterParams.length > 0) {
+      actionUrl += `?${filterParams.join('&')}`;
+    }
+
+    const dateRangeParams = this.getDateRangeParams();
+    if (dateRangeParams) {
+      if (filterParams.length > 0) {
+        actionUrl += `&${dateRangeParams}`;
+      } else {
+        actionUrl += `?${dateRangeParams}`;
+      }
+    }
+
+    form.action = actionUrl;
+    form.submit();
   }
 
   public render() {
     return (
-      <div className="dashboard">
+      <div className="menus-page">
         <h4>Menus List</h4>
 
         <div className="advanced-search float-left">
@@ -149,6 +178,9 @@ export default class Index extends React.Component<IProps, IState> {
           </div>
         </div>
 
+        <form ref={this.exportFormRef} method="POST" action="/api/export/menus">
+        </form>
+
         <div className="float-right" style={{marginTop: '32px'}}>
           <button type="button" className="btn btn-outline-primary"
                   onClick={this.exportHandle.bind(this)}>Export</button>
@@ -156,27 +188,26 @@ export default class Index extends React.Component<IProps, IState> {
 
         <table className="table table-striped table-sm menus-table" ref={this.tableRef}>
           <thead>
-            <tr>
-              <th>Place</th>
-              <th>Venue</th>
-              <th>Event</th>
-              <th>Sponsor</th>
-              <th>Date</th>
-              <th></th>
-            </tr>
+          <tr>
+            <th>Place</th>
+            <th>Venue</th>
+            <th>Event</th>
+            <th>Sponsor</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
           </thead>
           <tfoot style={{display: 'table-header-group'}}>
-            <tr>
-              {this.createSearchableInput("Search Place", 0)}
-              {this.createSearchableInput("Search Venue", 1)}
-              {this.createSearchableInput("Search Event", 2)}
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
+          <tr>
+            {this.createSearchableInput("Search Place", 0)}
+            {this.createSearchableInput("Search Venue", 1)}
+            {this.createSearchableInput("Search Event", 2)}
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
           </tfoot>
           <tbody>
-            { this.state.menus.map((menu) => MenuRow(menu)) }
           </tbody>
         </table>
       </div>

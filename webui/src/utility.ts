@@ -1,4 +1,4 @@
-export class Utility {
+export default class Utility {
   public static processResponse(): (response: Response) => Promise<any> {
     return (response: Response) => {
       if (response.ok) {

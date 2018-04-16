@@ -19,13 +19,35 @@ class MenusController < ApplicationController
     }
   end
 
+  def show
+    menu = Menu.includes(:menu_pages, :dishes).find(params[:id])
+
+    ret = {}
+    menu.menu_items.each do |menu_item|
+      menu_page = menu_item.menu_page
+      dish = menu_item.dish
+      ret[menu_page.page_number] ||= []
+      ret[menu_page.page_number] << dish.as_json(only: [:id, :name, :description])
+    end
+
+    # ensure page order
+    pages = ret.sort.map { |_page_number, dishes| dishes }
+    render json: {
+      name: menu.name,
+      place: menu.place,
+      venue: menu.venue,
+      event: menu.event,
+      pages: pages
+    }
+  end
+
   private
 
   def menus_query
     menus = Menu.order('place ASC NULLS LAST')
     menus = menus.where(filters) unless filters.blank?
 
-    # try cope with data table order params
+    # cope with data table order params
     order_info = params[:order]['0']
     return menus unless order_info
 
@@ -57,22 +79,5 @@ class MenusController < ApplicationController
         Menu.send(:sanitize_sql_array, ["#{name} ILIKE ?", "%#{value}%"])
       end.join(' AND ')
     end
-  end
-
-  def date_range(start_date, end_date)
-    return nil if start_date.blank? || end_date.blank?
-
-    begin
-      start_date = Date.parse(start_date)
-      end_date = Date.parse(end_date)
-    rescue ArgumentError => e
-      raise ::Errors::GeneralError, e.message
-    end
-
-    if start_date > end_date
-      raise Errors::GeneralError, 'invalid date range: start date is after end date'
-    end
-
-    (start_date..end_date)
   end
 end

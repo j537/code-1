@@ -18,7 +18,7 @@ const enum ImportType {
 const ImportTypeOptions = ["Dish", "Menu", "Menu Page", "Menu Item"].map((v) => <option value={v} key={v}>{v}</option>);
 
 export default class ImportPage extends React.Component<IProps, IState> {
-  private importInput: React.RefObject<HTMLInputElement>;
+  private readonly importInput: React.RefObject<HTMLInputElement>;
 
   constructor(props: IProps) {
     super(props);
