@@ -1,0 +1,6 @@
+id,name,description,menus_appeared,times_appeared,first_appeared,last_appeared,lowest_price,highest_price
+1,Consomme printaniere royal,,8,9,1897,1927,0.2,0.4
+2,Chicken gumbo,,110,116,1895,1960,0.1,0.8
+3,Tomato aux croutons,,13,13,1893,1917,0.25,0.4
+4,Onion au gratin,,41,41,1900,1971,0.25,1.0
+5,St. Emilion,,66,68,1881,1981,0.0,18.0
