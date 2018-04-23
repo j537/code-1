@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ajaxBaseUrl } from '../constants/BaseUrl';
 
 interface IProps {}
 
@@ -43,7 +44,7 @@ export default class ImportPage extends React.Component<IProps, IState> {
   }
 
   private getImportUrl(): string {
-    let url = '/api/import/';
+    let url = ajaxBaseUrl + '/import/';
     switch (this.state.importType) {
       case ImportType.Dish:
         url += 'dishes';

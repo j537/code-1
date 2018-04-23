@@ -2,6 +2,7 @@ import * as React from "react";
 import Utility from '../utility';
 import './MenuDetails.scss';
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ajaxBaseUrl } from '../constants/BaseUrl';
 
 interface IProps {
   match: { params: { menu_id: string; } };
@@ -49,7 +50,7 @@ export default class MenuDetails extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    fetch(`api/menus/${this.menuId}`)
+    fetch(`${ajaxBaseUrl}/api/menus/${this.menuId}`)
       .then(Utility.processResponse())
       .then((data) => {
           this.setState({details: data});

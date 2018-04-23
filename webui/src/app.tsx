@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import MenusPage from './pages/MenusPage';
 import ImportPage from './pages/ImportPage';
 import MenuDetails from './pages/MenuDetails';
+import DishesPage from './pages/DishesPage';
 
 const App = () => (
   <HashRouter>
@@ -15,11 +16,15 @@ const App = () => (
           <a className="nav-link" href="#/">Menus List</a>
         </li>
         <li className="nav-item">
+          <a className="nav-link" href="#/dishes">Dish List</a>
+        </li>
+        <li className="nav-item">
           <a className="nav-link" href="#/import">Import</a>
         </li>
       </ul>
 
       <Route exact path="/" component={MenusPage} />
+      <Route path="/dishes" component={DishesPage} />
       <Route path="/import" component={ImportPage} />
       <Route path="/menus/:menu_id" component={MenuDetails} />
     </div>

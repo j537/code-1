@@ -1,8 +1,9 @@
 class MenusController < ApplicationController
   def index
     menus = menus_query
-    date_range = date_range(params[:start_date], params[:end_date])
-    menus = menus.where(date: date_range) if date_range
+
+    menus = menus.where("date >= ?", params[:start_date]) if params[:start_date].present?
+    menus = menus.where("date <= ?", params[:end_date]) if params[:end_date].present?
 
     total_count = menus.count
 

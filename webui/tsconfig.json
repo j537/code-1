@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["es6", "dom"],
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "moduleResolution": "node",
     "rootDir": "src",
     "jsx": "react",

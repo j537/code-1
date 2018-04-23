@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import './MenusPage.scss';
+import { ajaxBaseUrl } from '../constants/BaseUrl';
 
 interface IProps {
 }
@@ -49,7 +50,7 @@ export default class Index extends React.Component<IProps, IState> {
   public componentDidMount() {
     this.dataTable = $(this.tableRef.current).DataTable({
       ajax: {
-        url: 'api/menus',
+        url: ajaxBaseUrl + '/api/menus',
         dataSrc: 'menus'
       },
       // searching: false,
@@ -111,7 +112,7 @@ export default class Index extends React.Component<IProps, IState> {
   }
 
   private searchHandle() {
-    let url = 'api/menus';
+    let url = ajaxBaseUrl + '/api/menus';
     const dateRangeParams = this.getDateRangeParams();
     if (dateRangeParams) {
       url += `?${dateRangeParams}`;
@@ -133,7 +134,7 @@ export default class Index extends React.Component<IProps, IState> {
   // TODO better file download support
   private exportHandle() {
     const form = this.exportFormRef.current;
-    let actionUrl = '/api/export/menus';
+    let actionUrl = ajaxBaseUrl + '/api/export/menus';
 
     const filterParams: string[] = [];
     _.forOwn(this.state.filters, (value, key) => {
@@ -178,7 +179,7 @@ export default class Index extends React.Component<IProps, IState> {
           </div>
         </div>
 
-        <form ref={this.exportFormRef} method="POST" action="/api/export/menus">
+        <form ref={this.exportFormRef} method="POST" action={ajaxBaseUrl + "/api/export/menus"}>
         </form>
 
         <div className="float-right" style={{marginTop: '32px'}}>

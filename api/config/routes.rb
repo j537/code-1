@@ -13,5 +13,7 @@ Rails.application.routes.draw do
         post 'menu_items'
       end
     end
+
+    resources :dishes
   end
 end

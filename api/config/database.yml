@@ -1,8 +1,6 @@
 default: &default
   adapter: postgresql
   encoding: utf8
-  user: hivetec
-  password: "<%= ENV['DB_PASSWORD'] %>"
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
   host: localhost
